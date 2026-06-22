@@ -10,7 +10,7 @@ set -euo pipefail
 # step 3 visualizes them all together.
 #   e.g. VIS_ROBOTS="hightorque_hi h2 t800" ./scripts/retarget_from_smplx.sh
 
-SMPL_MOTION_FILE="${SMPL_MOTION_FILE:-dataset/ACCAD/Extended_1_stageii.npz}"
+SMPL_MOTION_FILE="${SMPL_MOTION_FILE:-dataset/ACCAD/Form_1_stageii.npz}"
 VIS_ROBOTS="${VIS_ROBOTS:-g1 h2 t800 r1}"
 SOURCE_FPS="${SOURCE_FPS:-120}"
 RENDER_FPS="${RENDER_FPS:-30}"

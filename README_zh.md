@@ -92,7 +92,7 @@ SMPL-X 模型文件**不包含**在本仓库中（受其自身许可协议约束
 示例（自定义机器人与动作文件）：
 
 ```bash
-VIS_ROBOTS="hightorque_hi h2 t800" \
+VIS_ROBOTS="g1 hightorque_hi h2 t800" \
 SMPL_MOTION_FILE="dataset/ACCAD/Form_1_stageii.npz" \
 ./bash/retarget_from_smplx.sh
 ```
@@ -122,7 +122,7 @@ SMPL_MOTION_FILE="dataset/ACCAD/Form_1_stageii.npz" \
 示例：
 
 ```bash
-VIS_ROBOTS="h2 t800 r1" \
+VIS_ROBOTS="h2 t800 jaka_pi" \
 ROBOT_MOTION_FILE="dataset/lafan1_g1/dance1_subject1.csv" \
 ORIGIN_ROBOT="g1" \
 ./bash/retarget_from_robot.sh

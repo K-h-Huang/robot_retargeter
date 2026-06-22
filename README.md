@@ -111,7 +111,7 @@ Customize via environment variables:
 Example (custom robots and motion file):
 
 ```bash
-VIS_ROBOTS="hightorque_hi h2 t800" \
+VIS_ROBOTS="g1 hightorque_hi h2 t800" \
 SMPL_MOTION_FILE="dataset/ACCAD/Form_1_stageii.npz" \
 ./bash/retarget_from_smplx.sh
 ```
@@ -141,7 +141,7 @@ Direct video link:
 Example:
 
 ```bash
-VIS_ROBOTS="h2 t800 r1" \
+VIS_ROBOTS="g1 h2 t800 r1" \
 ROBOT_MOTION_FILE="dataset/lafan1_g1/dance1_subject1.csv" \
 ORIGIN_ROBOT="g1" \
 ./bash/retarget_from_robot.sh
