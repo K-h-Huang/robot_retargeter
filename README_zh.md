@@ -99,6 +99,11 @@ SMPL_MOTION_FILE="dataset/ACCAD/Form_1_stageii.npz" \
 
 ### 2) 从源机器人动作重定向
 
+演示视频：
+
+<video src="retarget_from_g1_dance1_subject2.mp4" controls muted playsinline width="100%"></video>
+
+
 ```bash
 ./bash/retarget_from_robot.sh
 ```
