@@ -39,7 +39,7 @@ contact_pos_fixed_factor: 15.0
 
 
 ik_match_table: {
-  "hips_mean": ["base_link", 100, 10],  
+  "hips_mean": ["base_link", 100, 0],  
 
   "left_hip": ["left_hip_sphere", 30, 3],
   "left_thigh": ["Left_knee_Link", 0.0, 3.0],

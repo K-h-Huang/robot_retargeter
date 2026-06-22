@@ -33,14 +33,14 @@ contact_links: [left_foot_end_link, left_toe_link,
 knee_angle_offset_degrees: 15.0
 
 ik_match_table: {
-  "hips_mean": ["pelvis", 100, 10],  
+  "hips_mean": ["pelvis", 100, 0],  
 
   "left_hip": ["left_hip_sphere", 30, 3],
-  "left_thigh": ["shinLeft", 0.0, 1.0],
+  "left_thigh": ["shinLeft", 0.0, 3.0],
   "left_calf": ["toeLeft", 30, 5],
 
   "right_hip": ["right_hip_sphere", 30, 3],
-  "right_thigh": ["shinRight", 0.0, 1.0],
+  "right_thigh": ["shinRight", 0.0, 3.0],
   "right_calf": ["toeRight", 30, 5],
 
   # "head": ["head_pitch_link", 0.0, 0.5],

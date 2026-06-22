@@ -119,7 +119,7 @@ def build_combined_spec(robots: list[str]) -> mujoco.MjSpec:
     grid_res = 256          # Pixel resolution per tile
     line_px = 3             # Grid line width (pixels)
     grid_rgba = np.zeros((grid_res, grid_res, 4), dtype=np.uint8)
-    bg_color = (100, 100, 100)    # Cell background color
+    bg_color = (75, 75, 75)    # Cell background color
     line_color = (50, 50, 50)  # Grid line color
     # Fill background first, then draw border lines on all four sides
     grid_rgba[:, :, :3] = bg_color
