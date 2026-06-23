@@ -67,7 +67,7 @@ The SMPL-X model files are **not** included in this repository (they are
 subject to their own license). To use the SMPL-X pipeline
 (`retarget_from_smplx.sh`), download them yourself:
 
-1. Register and download from the official site: https://smpl-x.is.tue.mpg.de/
+1. Register and download from the official site: [smplx model download](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_lockedhead_20230207.zip)
    (the "SMPL-X" models, `.npz` format).
 2. Place the files under `asset/smplx/` so the layout looks like:
 
@@ -169,3 +169,58 @@ RENDER_FPS=30 \
 
 After a run finishes, the retargeted robot motion is saved under
 `output_data/robot_motion/`.
+
+#### Using the Bones Seed G1 Dataset
+
+[Bones Studio](https://huggingface.co/datasets/bones-studio/seed) has released a
+**Seed** motion dataset recorded on the G1 robot. Its raw format (root pose as
+Euler angles in centimetres, joint values in degrees) differs from the LAFAN1
+format required by this project (root pose as a quaternion in metres, joint
+values in radians). Use `scripts/convert_bones_to_lafan1.py` to convert before
+retargeting.
+
+**Download the data**
+
+```bash
+# Download the G1 Seed dataset from Hugging Face
+wget https://huggingface.co/datasets/bones-studio/seed/blob/main/g1.tar.gz -O g1.tar.gz
+tar -xzf g1.tar.gz -C dataset/bones_g1_origin/
+```
+
+**Format conversion**
+
+`convert_bones_to_lafan1.py` converts the raw G1 CSV files to LAFAN1-compatible
+format:
+
+| Argument | Default | Description |
+|---|---|---|
+| `--input-root` | `dataset/bones_g1_origin` | Directory containing the raw CSV files (batch mode) |
+| `--output-root` | `dataset/bones_g1` | Output directory for converted CSV files |
+| `--input-csv` | _(none)_ | Convert a single CSV file only |
+| `--root-scale` | `0.01` | Root translation scale factor (cm → m) |
+
+```bash
+# Batch-convert all CSV files under dataset/bones_g1_origin/
+python scripts/convert_bones_to_lafan1.py
+
+# Convert a single file only
+python scripts/convert_bones_to_lafan1.py \
+    --input-csv dataset/bones_g1_origin/grab_walk_ff_180_001__A550_M.csv
+
+# Custom input / output directories
+python scripts/convert_bones_to_lafan1.py \
+    --input-root dataset/bones_g1_origin \
+    --output-root dataset/bones_g1
+```
+
+Once conversion is complete, pass the generated CSV directly to the retargeting
+pipeline:
+
+```bash
+VIS_ROBOTS="jaka_pi h2 t800 pnd_adam" \
+ROBOT_MOTION_FILE="dataset/bones_g1/grab_walk_ff_180_001__A550_M.csv" \
+ORIGIN_ROBOT="g1" \
+SOURCE_FPS=120 \
+RENDER_FPS=30 \
+./bash/retarget_from_robot.sh
+```

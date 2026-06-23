@@ -54,7 +54,7 @@ pip install -r requirements.txt
 
 SMPL-X 模型文件**不包含**在本仓库中（受其自身许可协议约束）。若要使用 SMPL-X 流水线（`retarget_from_smplx.sh`），请自行下载：
 
-1. 在官网注册并下载：https://smpl-x.is.tue.mpg.de/ （下载 "SMPL-X" 模型，`.npz` 格式）。
+1. 在官网注册并下载：[smplx model download](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_lockedhead_20230207.zip) （下载 "SMPL-X" 模型，`.npz` 格式）。
 2. 将文件放到 `asset/smplx/` 目录下，结构如下：
 
    ```
@@ -68,16 +68,15 @@ SMPL-X 模型文件**不包含**在本仓库中（受其自身许可协议约束
 
 > 注意：较大的机器人 mesh / 纹理文件（`*.stl`、`*.obj`、`*.dae`、`*.png`、`*.mtl`）已直接存储在仓库中，因此首次克隆耗时可能更长。
 
-### 动作数据集（AMASS / ACCAD）
+### 动作数据集（AMASS）
 
 `dataset/ACCAD/` 中提供的是 AMASS 数据集里 **ACCAD** 子集的少量开源示例动作（SMPL-X `.npz` 格式），仅用于快速体验流水线。若需要更多动作数据，请自行从 AMASS 官网下载：
 
 - AMASS 官网（注册后下载）：https://amass.is.tue.mpg.de/
-- ACCAD 子集下载页：https://amass.is.tue.mpg.de/download.php （在列表中选择 **ACCAD**，下载 `SMPL-X N`（neutral）格式）
 
 下载后解压，将 `.npz` 动作文件放到 `dataset/` 下任意目录（例如 `dataset/ACCAD/`），再通过 `SMPL_MOTION_FILE` 指向对应文件即可。
 
-> 下载即表示你同意 AMASS / ACCAD 的许可协议，相关数据仅可用于其许可允许的用途。
+> 下载即表示你同意 AMASS 的许可协议，相关数据仅可用于其许可允许的用途。
 
 ## 运行
 
@@ -142,3 +141,51 @@ RENDER_FPS=30 \
 ```
 
 运行结束后，重定向得到的机器人动作会保存在 `output_data/robot_motion/` 下。
+
+#### 使用 Bones Seed G1 数据集
+
+[Bones Studio](https://huggingface.co/datasets/bones-studio/seed) 发布了以 G1 机器人为载体的 **Seed** 动作数据集，其原始格式（根节点使用欧拉角/厘米单位，关节值为角度）与本项目所需的 LAFAN1 格式（根节点使用四元数/米单位，关节值为弧度）不同，需要先用 `scripts/convert_bones_to_lafan1.py` 进行转换。
+
+**数据下载**
+
+```bash
+# 从 Hugging Face 下载 G1 Seed 数据集
+wget https://huggingface.co/datasets/bones-studio/seed/blob/main/g1.tar.gz -O g1.tar.gz
+tar -xzf g1.tar.gz -C dataset/bones_g1_origin/
+```
+
+**格式转换**
+
+`convert_bones_to_lafan1.py` 将原始 G1 CSV 转换为 LAFAN1 兼容格式：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| `--input-root` | `dataset/bones_g1_origin` | 原始 CSV 所在目录（批量转换） |
+| `--output-root` | `dataset/bones_g1` | 转换后 CSV 输出目录 |
+| `--input-csv` | 无 | 仅转换单个 CSV 文件 |
+| `--root-scale` | `0.01` | 根节点位移缩放系数（cm→m） |
+
+```bash
+# 批量转换 dataset/bones_g1_origin/ 下所有 CSV 文件
+python scripts/convert_bones_to_lafan1.py
+
+# 仅转换单个文件
+python scripts/convert_bones_to_lafan1.py \
+    --input-csv dataset/bones_g1_origin/grab_walk_ff_180_001__A550_M.csv
+
+# 自定义输入 / 输出目录
+python scripts/convert_bones_to_lafan1.py \
+    --input-root dataset/bones_g1_origin \
+    --output-root dataset/bones_g1
+```
+
+转换完成后，即可将生成的 CSV 作为源动作传入重定向流水线：
+
+```bash
+VIS_ROBOTS="jaka_pi h2 t800 pnd_adam" \
+ROBOT_MOTION_FILE="dataset/bones_g1/grab_walk_ff_180_001__A550_M.csv" \
+ORIGIN_ROBOT="g1" \
+SOURCE_FPS=120 \
+RENDER_FPS=30 \
+./bash/retarget_from_robot.sh
+```
